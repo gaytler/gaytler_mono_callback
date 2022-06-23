@@ -22,30 +22,18 @@ def send_message(chat_id, text):
         "https://api.telegram.org/bot" + TELEGRAM_TOKEN + "/sendMessage",
         params=params
     )
-    
-def format_raz_by_number(number):
+
+def format_noun_by_number(number, single, plural, plural_alt):
     last_digit = int(number) % 10
     second_last_digit = second_last_digit = (int(number) // 10) % 10
 
     if (second_last_digit == 1) or (last_digit in (0,5,6,7,8,9)):
-        return "%d разів"%number
+        return "%d %s"%(number, plural)
     
     if last_digit in (2,3,4):
-        return "%d рази"%number
+        return "%d %s"%(number, plural_alt)
 
-    return "%d раз"%number
-    
-def format_zshk_by_number(number):
-    last_digit = int(number) % 10
-    second_last_digit = second_last_digit = (int(number) // 10) % 10
-
-    if (second_last_digit == 1) or (last_digit in (0,5,6,7,8,9)):
-        return "%d защекоінів"%number
-    
-    if last_digit in (2,3,4):
-        return "%d защекоіна"%number
-
-    return "%d защекоін"%number
+    return "%d %s"%(number, single)
     
 def process_event(event):
     print(event)
@@ -67,8 +55,11 @@ def process_event(event):
             # get additional data from transaction
             amount = message['data']['statementItem']['amount']/100
             balance = message['data']['statementItem']['balance']/100
+            
+            formatted_amount = format_noun_by_number(amount, "раз", "разів", "рази")
+            formatted_balance = format_noun_by_number(balance, "защекоін", "защекоінів", "защекоіна")
     
-            send_msg = "⚡ %s насипали за щеку %s\n⚡ За щекою %s 🍆💦😛"%(TARGET_STORAGE, format_raz_by_number(amount), format_zshk_by_number(balance))
+            send_msg = "⚡ %s насипали за щоку %s\n⚡ За щокою %s 🍆💦😛"%(TARGET_STORAGE, formatted_amount, formatted_balance)
         
             # notify all users
             users_table = client.Table(USERS_TABLE_NAME)
