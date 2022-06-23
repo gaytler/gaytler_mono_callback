@@ -61,10 +61,12 @@ def process_event(event):
     
             send_msg = "⚡ %s насипали за щоку %s\n⚡ За щокою %s 🍆💦😛"%(TARGET_STORAGE, formatted_amount, formatted_balance)
         
-            # notify all users
+            # notify users that have notifications enabled
             users_table = client.Table(USERS_TABLE_NAME)
-            users = users_table.scan()['Items']
-    
+            
+            users = users_table.scan(FilterExpression = 'notifications_enabled = :notifications_enabled',
+                                     ExpressionAttributeValues = {':notifications_enabled' : True})['Items']
+                                     
             for user in users:
                 send_message(user['id'], send_msg)
                 
