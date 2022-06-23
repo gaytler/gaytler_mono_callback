@@ -23,6 +23,30 @@ def send_message(chat_id, text):
         params=params
     )
     
+def format_raz_by_number(number):
+    last_digit = int(number) % 10
+    second_last_digit = second_last_digit = (int(number) // 10) % 10
+
+    if (second_last_digit == 1) or (last_digit in (0,5,6,7,8,9)):
+        return "%d разів"%number
+    
+    if last_digit in (2,3,4):
+        return "%d рази"%number
+
+    return "%d раз"%number
+    
+def format_zshk_by_number(number):
+    last_digit = int(number) % 10
+    second_last_digit = second_last_digit = (int(number) // 10) % 10
+
+    if (second_last_digit == 1) or (last_digit in (0,5,6,7,8,9)):
+        return "%d защекоінів"%number
+    
+    if last_digit in (2,3,4):
+        return "%d защекоіна"%number
+
+    return "%d защекоін"%number
+    
 def process_event(event):
     print(event)
     
@@ -44,7 +68,7 @@ def process_event(event):
             amount = message['data']['statementItem']['amount']/100
             balance = message['data']['statementItem']['balance']/100
     
-            send_msg = "⚡ %s насипали за щеку %d раз\n⚡ За щекою %d защекоіна 🍆💦😛"%(TARGET_STORAGE, amount, balance)
+            send_msg = "⚡ %s насипали за щеку %s\n⚡ За щекою %s 🍆💦😛"%(TARGET_STORAGE, format_raz_by_number(amount), format_zshk_by_number(balance))
         
             # notify all users
             users_table = client.Table(USERS_TABLE_NAME)
